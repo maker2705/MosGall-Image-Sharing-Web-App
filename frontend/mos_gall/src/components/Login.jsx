@@ -1,18 +1,43 @@
 import React from 'react'
-import { GoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import shareVideo from '../assets/share.mp4';
 import logo from '../assets/logowhite.png';
-
-
+import jwt_decode from 'jwt-decode';
+import client from '../client'
 const Login = () => {
-  
-  const responseGoogle = (response) => {
-    console.log(response);
-    // console.log(response.profileObj) 
-    // const { name, googleId, imageUrl } = response.profileObj;
-  }
+  const navigate = useNavigate();
+
+  const credentialResponse = (response) => {
+    localStorage.setItem('user', JSON.stringify(response.profileObj));
+    var decodedHeader = jwt_decode(response.credential);
+    console.log(decodedHeader);
+
+    const { name, sub, picture } = decodedHeader;
+    const doc = {
+      _id: sub,
+      _type: 'user',
+      userName: name,
+      image: picture,
+    }
+    client.createIfNotExists(doc).then( () => {
+        navigate('/', { replace: true })
+    } )
+
+
+    // if (response?.credential) {
+    //   try {
+    //     var decoded = jwt_decode(response.credential);
+    //     console.log(decoded);
+    //   } catch (error) {
+    //     console.error('Error decoding JWT token:', error);
+    //   }
+    // }
+
+
+   }
+
 
   return (
     <div className='flex justify-start items-center flex-col h-screen  ' >
@@ -34,13 +59,13 @@ const Login = () => {
                 
 
                 <div className='shadow-2xl' >
-                
                     <GoogleLogin
-                      clientId = {process.env.REACT_APP_GOOGLE_API_TOKEN}
-                      onSuccess={responseGoogle}
-                      onError={responseGoogle}
-                      // cookiePolicy = 'single_host_origin'
-                    />
+                        onSuccess = {credentialResponse}
+                        onError = {() => { 
+                          console.log('Login Failed');
+                        }}
+                        cookiePolicy = 'single_host_origin'
+                      />
                 </div>
 
 
