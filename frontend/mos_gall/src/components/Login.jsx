@@ -1,7 +1,6 @@
 import React from 'react'
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
-import { FcGoogle } from 'react-icons/fc';
 import shareVideo from '../assets/share.mp4';
 import logo from '../assets/logowhite.png';
 import jwt_decode from 'jwt-decode';
@@ -25,7 +24,7 @@ const Login = () => {
         navigate('/', { replace: true })
     } )
 
-
+    
     // if (response?.credential) {
     //   try {
     //     var decoded = jwt_decode(response.credential);
@@ -59,13 +58,13 @@ const Login = () => {
                 
 
                 <div className='shadow-2xl' >
-                    <GoogleLogin
-                        onSuccess = {credentialResponse}
-                        onError = {() => { 
-                          console.log('Login Failed');
-                        }}
-                        cookiePolicy = 'single_host_origin'
-                      />
+                              <GoogleLogin
+                onSuccess = {credentialResponse}
+                onError = {() => {
+                  console.log('Login Failed');
+                }}
+                cookiePolicy = 'single_host_origin'
+              />
                 </div>
 
 
